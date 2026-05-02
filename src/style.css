@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Noto Sans SC', 'Noto Sans JP', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.kana-char {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.kana-pop {
+  animation: pop 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fade-in 0.25s ease-out;
+}
