@@ -63,7 +63,6 @@
         <div v-if="searchResults.length > 0">
           <p class="text-sm text-gray-500 mb-3">找到 {{ searchResults.length }} 个结果</p>
           <div class="space-y-3">
-            <!-- 假名结果 -->
             <div v-if="kanaSearchResults.length" class="flex flex-wrap gap-2">
               <KanaCard
                 v-for="item in kanaSearchResults"
@@ -74,13 +73,16 @@
                 @click="speak(item.h, item.h)"
               />
             </div>
-            <!-- 规则结果 -->
             <div v-for="item in ruleSearchResults" :key="item.id"
               class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <span class="text-xs px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400">{{ item.category }}</span>
               <span class="ml-2 font-bold">{{ item.title }}</span>
             </div>
-            <!-- 拟声词结果 -->
+            <div v-for="item in discriminationSearchResults" :key="item.id"
+              class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <span class="text-xs px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">{{ item.category }}</span>
+              <span class="ml-2 font-bold">{{ item.title }}</span>
+            </div>
             <div v-if="onomatopoeiaSearchResults.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               <div v-for="item in onomatopoeiaSearchResults" :key="item.word"
                 class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer hover:border-amber-400"
@@ -310,6 +312,7 @@ const seionTableRows = computed(() => {
 // 搜索分类
 const kanaSearchResults = computed(() => searchResults.value.filter(r => r.source === 'kana'))
 const ruleSearchResults = computed(() => searchResults.value.filter(r => r.source === 'rule'))
+const discriminationSearchResults = computed(() => searchResults.value.filter(r => r.source === 'discrimination'))
 const onomatopoeiaSearchResults = computed(() => searchResults.value.filter(r => r.source === 'onomatopoeia'))
 
 // 深色模式
@@ -342,10 +345,11 @@ let searchTimer = null
 import { watch } from 'vue'
 watch(searchQuery, (q) => {
   clearTimeout(searchTimer)
-  if (!q.trim()) { searchResults.value = []; return }
+  const query = q.trim()
+  if (!query) { searchResults.value = []; return }
   searchTimer = setTimeout(async () => {
     try {
-      const res = await searchKana(q.trim())
+      const res = await searchKana(query, data.value)
       searchResults.value = res.results || []
     } catch {
       searchResults.value = []

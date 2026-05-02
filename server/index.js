@@ -77,6 +77,26 @@ app.get('/api/search', (req, res) => {
     }
   }
 
+  // 搜索辨音词
+  for (const item of discrimination) {
+    const hay = [
+      item.title,
+      item.category,
+      item.tip,
+      item.a.word,
+      item.a.kana,
+      item.a.romaji,
+      item.a.meaning,
+      item.b.word,
+      item.b.kana,
+      item.b.romaji,
+      item.b.meaning,
+    ].join(' ').toLowerCase()
+    if (hay.includes(q)) {
+      results.push({ id: item.id, title: item.title, category: item.category, source: 'discrimination' })
+    }
+  }
+
   res.json({ results })
 })
 
